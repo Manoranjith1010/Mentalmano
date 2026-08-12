@@ -1,12 +1,50 @@
 from flask import Flask, render_template, request, session, flash, send_file, jsonify
+import os
 
-import mysql.connector
+from pymongo import MongoClient
+from pymongo.errors import PyMongoError
+from bson.objectid import ObjectId
 from chatterbot import ChatBot
 from requests import get
 from bs4 import BeautifulSoup
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'aaa'
+
+MONGO_URI = os.getenv('MONGO_URI', 'mongodb://localhost:27017')
+MONGO_DB_NAME = os.getenv('MONGO_DB_NAME', '3herbalchatmondb')
+
+
+def get_db():
+    client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
+    return client[MONGO_DB_NAME]
+
+
+def reg_doc_to_row(doc):
+    return [
+        str(doc.get('_id', '')),
+        doc.get('Name', ''),
+        doc.get('Mobile', ''),
+        doc.get('Email', ''),
+        doc.get('Address', ''),
+        doc.get('UserName', ''),
+        doc.get('Password', ''),
+    ]
+
+
+def report_doc_to_row(doc):
+    return [
+        str(doc.get('_id', '')),
+        doc.get('UserName', ''),
+        doc.get('PlantName', ''),
+        doc.get('Date', ''),
+        doc.get('Info', ''),
+        doc.get('Status', '0'),
+    ]
+
+
+def db_error_response(error):
+    return render_template('db_error.html', error_message=str(error), db_uri=MONGO_URI, db_name=MONGO_DB_NAME), 500
 
 english_bot = ChatBot('Bot',
                       storage_adapter='chatterbot.storage.SQLStorageAdapter',
@@ -22,30 +60,24 @@ english_bot = ChatBot('Bot',
 def home():
     import datetime
     date = datetime.datetime.now().strftime('%Y-%m-%d')
-    conn = mysql.connector.connect(user='root', password='', host='localhost', database='3herbalchatmondb')
-    cursor = conn.cursor()
-    cursor.execute("SELECT * from reporttb where date='" + date + "' and Status='0' ")
-    data = cursor.fetchall()
-    for x1 in data:
-        id = x1[0]
-        UserName = x1[1]
-        PlantName = x1[2]
-        info = x1[4]
+    try:
+        db = get_db()
+        data = list(db.reporttb.find({'Date': date, 'Status': '0'}))
+        for x1 in data:
+            report_id = x1.get('_id')
+            user_name = x1.get('UserName', '')
+            plant_name = x1.get('PlantName', '')
+            info = x1.get('Info', '')
 
-        conn = mysql.connector.connect(user='root', password='', host='localhost', database='3herbalchatmondb')
-        cursor = conn.cursor()
-        cursor.execute("SELECT * from regtb where username='" + UserName + "'")
-        data = cursor.fetchone()
-        if data:
-            msg = "PlantName :" + PlantName + "\n" + "Info :" + info
-            sendmail(data[3], msg)
+            reg_data = db.regtb.find_one({'UserName': user_name})
+            if reg_data and reg_data.get('Email'):
+                msg = "PlantName :" + plant_name + "\n" + "Info :" + info
+                sendmail(reg_data.get('Email'), msg)
 
-        conn = mysql.connector.connect(user='root', password='', host='localhost', database='3herbalchatmondb')
-        cursor = conn.cursor()
-        cursor.execute(
-            "update  reporttb set Status='1'  where id='" + str(id) + "'")
-        conn.commit()
-        conn.close()
+            if report_id:
+                db.reporttb.update_one({'_id': report_id}, {'$set': {'Status': '1'}})
+    except PyMongoError as error:
+        return db_error_response(error)
 
     return render_template('index.html')
 
@@ -118,11 +150,13 @@ def UserLogin():
 @app.route('/Monitor')
 def Monitor():
     uname = session['uname']
-    conn = mysql.connector.connect(user='root', password='', host='localhost', database='3herbalchatmondb')
-    cur = conn.cursor()
-    cur.execute("SELECT * FROM reporttb where UserName='" + uname + "'  ")
-    data = cur.fetchall()
-    return render_template('Monitor.html', data=data)
+    try:
+        db = get_db()
+        reports = list(db.reporttb.find({'UserName': uname}))
+        data = [report_doc_to_row(item) for item in reports]
+        return render_template('Monitor.html', data=data)
+    except PyMongoError as error:
+        return db_error_response(error)
 
 
 @app.route("/newuser", methods=['GET', 'POST'])
@@ -135,13 +169,19 @@ def newuser():
         uname = request.form['uname']
         password = request.form['password']
 
-        conn = mysql.connector.connect(user='root', password='', host='localhost', database='3herbalchatmondb')
-        cursor = conn.cursor()
-        cursor.execute(
-            "INSERT INTO regtb VALUES ('','" + name + "','" + mobile + "','" + email + "','" + address + "','" + uname + "','" + password + "')")
-        conn.commit()
-        conn.close()
-        flash('User Register successfully')
+        try:
+            db = get_db()
+            db.regtb.insert_one({
+                'Name': name,
+                'Mobile': mobile,
+                'Email': email,
+                'Address': address,
+                'UserName': uname,
+                'Password': password,
+            })
+            flash('User Register successfully')
+        except PyMongoError as error:
+            return db_error_response(error)
     return render_template('UserLogin.html')
 
 
@@ -152,34 +192,33 @@ def ulogin():
         password = request.form['password']
         session['uname'] = request.form['uname']
 
-        conn = mysql.connector.connect(user='root', password='', host='localhost', database='3herbalchatmondb')
-        cursor = conn.cursor()
-        cursor.execute("SELECT * from regtb where username='" + username + "' and Password='" + password + "'")
-        data = cursor.fetchone()
-        if data is None:
+        try:
+            db = get_db()
+            data = db.regtb.find_one({'UserName': username, 'Password': password})
+            if data is None:
 
-            flash('Username or Password is wrong')
-            return render_template('UserLogin.html')
-        else:
+                flash('Username or Password is wrong')
+                return render_template('UserLogin.html')
+            else:
 
-            session['mob'] = data[2]
-
-            conn = mysql.connector.connect(user='root', password='', host='localhost', database='3herbalchatmondb')
-            cur = conn.cursor()
-            cur.execute("SELECT * FROM regtb where username='" + username + "' and Password='" + password + "'")
-            data = cur.fetchall()
-            flash("Login successfully")
-            return render_template('UserHome.html', data=data)
+                session['mob'] = data.get('Mobile', '')
+                data = [reg_doc_to_row(data)]
+                flash("Login successfully")
+                return render_template('UserHome.html', data=data)
+        except PyMongoError as error:
+            return db_error_response(error)
 
 
 @app.route("/UserHome")
 def UserHome():
     uname = session['uname']
-    conn = mysql.connector.connect(user='root', password='', host='localhost', database='3herbalchatmondb')
-    cur = conn.cursor()
-    cur.execute("SELECT * FROM regtb where UserName='" + uname + "'  ")
-    data = cur.fetchall()
-    return render_template('UserHome.html', data=data)
+    try:
+        db = get_db()
+        users = list(db.regtb.find({'UserName': uname}))
+        data = [reg_doc_to_row(item) for item in users]
+        return render_template('UserHome.html', data=data)
+    except PyMongoError as error:
+        return db_error_response(error)
 
 
 @app.route("/Predict")
@@ -360,32 +399,37 @@ def newinfo():
         Date = request.form['Date']
         info = request.form['info']
 
-        conn = mysql.connector.connect(user='root', password='', host='localhost', database='3herbalchatmondb')
-        cursor = conn.cursor()
-        cursor.execute(
-            "INSERT INTO reporttb VALUES ('','" + uname + "','" + name + "','" + Date + "','" + info + "','0')")
-        conn.commit()
-        conn.close()
-        flash('Record save successfully')
+        try:
+            db = get_db()
+            db.reporttb.insert_one({
+                'UserName': uname,
+                'PlantName': name,
+                'Date': Date,
+                'Info': info,
+                'Status': '0',
+            })
+            flash('Record save successfully')
 
-        conn = mysql.connector.connect(user='root', password='', host='localhost', database='3herbalchatmondb')
-        cur = conn.cursor()
-        cur.execute("SELECT * FROM reporttb where UserName='" + uname + "'  ")
-        data = cur.fetchall()
-        return render_template('Monitor.html', data=data)
+            reports = list(db.reporttb.find({'UserName': uname}))
+            data = [report_doc_to_row(item) for item in reports]
+            return render_template('Monitor.html', data=data)
+        except PyMongoError as error:
+            return db_error_response(error)
 
 
 @app.route("/APRemove")
 def APRemove():
     id = request.args.get('id')
-    conn = mysql.connector.connect(user='root', password='', host='localhost', database='3herbalchatmondb')
-    cursor = conn.cursor()
-    cursor.execute(
-        "delete from reporttb where id='" + id + "'")
-    conn.commit()
-    conn.close()
-    flash('Remove Successfully!')
-    return Monitor()
+    try:
+        if not id:
+            flash('Invalid record id')
+            return Monitor()
+        db = get_db()
+        db.reporttb.delete_one({'_id': ObjectId(id)})
+        flash('Remove Successfully!')
+        return Monitor()
+    except (PyMongoError, ValueError) as error:
+        return db_error_response(error)
 
 
 def sendmsg(targetno, message):
