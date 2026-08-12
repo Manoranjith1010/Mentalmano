@@ -13,6 +13,7 @@ app.config['SECRET_KEY'] = 'aaa'
 
 MONGO_URI = os.getenv('MONGO_URI', 'mongodb://localhost:27017')
 MONGO_DB_NAME = os.getenv('MONGO_DB_NAME', '3herbalchatmondb')
+CHATBOT_MONGO_DB_NAME = os.getenv('CHATBOT_MONGO_DB_NAME', 'chatbotdb')
 
 
 def get_db():
@@ -47,7 +48,9 @@ def db_error_response(error):
     return render_template('db_error.html', error_message=str(error), db_uri=MONGO_URI, db_name=MONGO_DB_NAME), 500
 
 english_bot = ChatBot('Bot',
-                      storage_adapter='chatterbot.storage.SQLStorageAdapter',
+                      storage_adapter='chatterbot.storage.MongoDatabaseAdapter',
+                      database_uri=MONGO_URI,
+                      database=CHATBOT_MONGO_DB_NAME,
                       logic_adapters=[
                           {
                               'import_path': 'chatterbot.logic.BestMatch'

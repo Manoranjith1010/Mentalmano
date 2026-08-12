@@ -10,8 +10,13 @@ app = Flask(__name__)
 app.config['DEBUG']
 app.config['SECRET_KEY'] = '7d441f27d441f27567d441f2b6176a'
 
+MONGO_URI = os.getenv('MONGO_URI', 'mongodb://localhost:27017')
+CHATBOT_MONGO_DB_NAME = os.getenv('CHATBOT_MONGO_DB_NAME', 'chatbotdb')
+
 english_bot = ChatBot('Bot',
-                      storage_adapter='chatterbot.storage.SQLStorageAdapter',
+                      storage_adapter='chatterbot.storage.MongoDatabaseAdapter',
+                      database_uri=MONGO_URI,
+                      database=CHATBOT_MONGO_DB_NAME,
                       logic_adapters=[
                           {
                               'import_path': 'chatterbot.logic.BestMatch'
