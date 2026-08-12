@@ -51,14 +51,14 @@ model.summary()
 from tensorflow.keras.optimizers import RMSprop
 
 early = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=5)
-model.compile(loss='categorical_crossentropy', optimizer=RMSprop(lr=0.001), metrics=['accuracy'])
+model.compile(loss='categorical_crossentropy', optimizer=RMSprop(learning_rate=0.001), metrics=['accuracy'])
 
 total_sample = train_generator.n
 
 n_epochs = 25
 
-history = model.fit_generator(train_generator, steps_per_epoch=int(total_sample / batch_size), epochs=n_epochs,
-                              verbose=1)
+history = model.fit(train_generator, steps_per_epoch=int(total_sample / batch_size), epochs=n_epochs,
+                    verbose=1)
 
 model.save('model.h5')
 
@@ -86,7 +86,7 @@ from sklearn.metrics import confusion_matrix
 
 test_steps_per_epoch = numpy.math.ceil(test_generator.samples / test_generator.batch_size)
 
-predictions = model.predict_generator(test_generator, steps=test_steps_per_epoch)
+predictions = model.predict(test_generator, steps=test_steps_per_epoch)
 # Get most likely class
 predicted_classes = numpy.argmax(predictions, axis=1)
 
