@@ -1,0 +1,75 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "git-status-check",
+			"type": "shell",
+			"command": "git",
+			"args": [
+				"status",
+				"-sb"
+			]
+		},
+		{
+			"label": "git-porcelain-count",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"$s = git status --porcelain=v1; Write-Output \"COUNT=$($s.Count)\"; $s | Select-Object -First 5"
+			]
+		},
+		{
+			"label": "git-commit-attempt",
+			"type": "shell",
+			"command": "git",
+			"args": [
+				"commit",
+				"-m",
+				"Update project files"
+			]
+		},
+		{
+			"label": "count-output-lines",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"$p='c:\\Users\\manor\\AppData\\Roaming\\Code\\User\\workspaceStorage\\59dc77c192291bb376e92db3ccac96f9\\GitHub.copilot-chat\\chat-session-resources\\62828e8c-7c12-4d29-abba-19d08219e038\\call_xsHTmswXSVrM9cYJiflB5XPq__vscode-1786560773164\\content.txt'; (Get-Content $p).Count"
+			]
+		},
+		{
+			"label": "git-add-all",
+			"type": "shell",
+			"command": "git",
+			"args": [
+				"add",
+				"-A"
+			]
+		},
+		{
+			"label": "count-add-lines",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"$p='c:\\Users\\manor\\AppData\\Roaming\\Code\\User\\workspaceStorage\\59dc77c192291bb376e92db3ccac96f9\\GitHub.copilot-chat\\chat-session-resources\\62828e8c-7c12-4d29-abba-19d08219e038\\call_5zmZYuVRtppVcr0kaEwT36x2__vscode-1786560773169\\content.txt'; (Get-Content $p).Count"
+			]
+		},
+		{
+			"label": "git-add-no-venv",
+			"type": "shell",
+			"command": "git",
+			"args": [
+				"add",
+				"-A",
+				"--",
+				".",
+				":(exclude)venv/**"
+			]
+		}
+	]
+}

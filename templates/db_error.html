@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MongoDB Connection Error</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f7f9fc;
+            color: #1f2937;
+        }
+        .wrap {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+        .card {
+            width: 100%;
+            max-width: 780px;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+        }
+        h1 {
+            margin: 0 0 12px;
+            font-size: 28px;
+            color: #b91c1c;
+        }
+        p {
+            margin: 0 0 10px;
+            line-height: 1.5;
+        }
+        code {
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 2px 6px;
+        }
+        .error-box {
+            margin-top: 14px;
+            padding: 12px;
+            border-radius: 8px;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #7f1d1d;
+        }
+        ul {
+            margin: 8px 0 0 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="card">
+            <h1>MongoDB Connection Error</h1>
+            <p>The application could not connect to MongoDB. Please check your environment variables and restart the app.</p>
+            <p>Target URI: <code>{{ db_uri }}</code></p>
+            <p>Target database: <code>{{ db_name }}</code></p>
+            <div class="error-box">
+                <strong>Details:</strong> {{ error_message }}
+            </div>
+            <p>Set these variables before starting the app:</p>
+            <ul>
+                <li>MONGO_URI</li>
+                <li>MONGO_DB_NAME</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

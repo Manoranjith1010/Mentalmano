@@ -1,0 +1,12 @@
+Flask
+pymongo
+chatterbot
+requests
+beautifulsoup4
+tensorflow
+keras
+numpy
+matplotlib
+seaborn
+scikit-learn
+nltk
