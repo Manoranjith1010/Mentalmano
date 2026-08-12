@@ -1,0 +1,278 @@
+
+
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Agrowfarm - Agriculture Category Bootstrap Responsive Template | Contact :: W3layouts </title>
+    <!-- google fonts -->
+    <link href="//fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+    <!-- Template CSS -->
+    <link rel="stylesheet" href="../static/assets/css/style-starter.css">
+
+    <style>
+        table,td,th
+        {
+        border:1px solid black;
+        border-collapse:collapse;
+        }
+    </style>
+
+     <style>
+	   .main{
+	  display:flex;
+	  flex-wrap:wrap;
+	  column-gap:50px;
+	  row-gap:20px;
+	  }
+	  .main2{
+	  display:flex;
+	  flex-direction:column;
+	  flex-wrap:wrap;
+	  width:300px;
+	  height:520px;
+	  row-gap:5px;
+	  padding:20px;
+	  box-shadow:2px 2px  10px 2px lightgray;
+	  margin-left:20px;
+	  box-sizzing:border-box;
+	  border-top-left-radius:10px;
+	  border-top-right-radius:10px;
+	  }
+
+	  .price{
+
+
+	  color:#FFFFFF;
+	  font-weight:800;
+	   background:#02924e;
+	  border-radius:5px;
+	  width:100%;
+	  text-align:center;padding:5px;
+	 }
+	 .main2 img{
+
+	 height:200px;
+	 }
+	  .add{
+	   padding:10px;
+	  background:#02924e;
+	  color:#FFFFFF;
+
+	  font-weight:800;
+	align-items:flex-end;
+	  border-radius:5px;
+	    width:90px;
+	  text-align:center;
+	  margin-left:150px;
+	  margin-top:30px;
+	  }
+	  .add a{
+	  text-decoration:none;
+	  color:#FFF;
+	   width:80%;
+	  }
+	  </style>
+</head>
+
+<body>
+    <!--/Header-->
+    <header id="site-header" class="fixed-top">
+        <div class="container">
+            <nav class="navbar navbar-expand-lg navbar-light stroke">
+                <h1><a class="navbar-brand" href="index.html">
+                        Herbal Plants Leaf  <span class="sub-color">Classification</span>
+                    </a></h1>
+                <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon fa icon-expand fa-bars"></span>
+                    <span class="navbar-toggler-icon fa icon-close fa-times"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarScroll">
+                    <ul class="navbar-nav mx-lg-auto my-2 my-lg-0 navbar-nav-scroll">
+                         {% include 'Menu/User.html'  %}
+                    </ul>
+
+                </div>
+                <!-- toggle switch for light and dark theme -->
+                <div class="mobile-position">
+                    <nav class="navigation">
+                        <div class="theme-switch-wrapper">
+                            <label class="theme-switch" for="checkbox">
+                                <input type="checkbox" id="checkbox">
+                                <div class="mode-container">
+                                    <i class="gg-sun"></i>
+                                    <i class="gg-moon"></i>
+                                </div>
+                            </label>
+                        </div>
+                    </nav>
+                </div>
+                <!-- //toggle switch for light and dark theme -->
+            </nav>
+        </div>
+    </header>
+    <!--//Header-->
+    <!--/inner-page-->
+    <div class="inner-banner py-5">
+        <section class="w3l-breadcrumb text-left py-sm-5 ">
+            <div class="container">
+                <div class="w3breadcrumb-gids">
+                    <div class="w3breadcrumb-left text-left">
+                        <h2 class="inner-w3-title">
+                            User </h2>
+
+                    </div>
+                    <div class="w3breadcrumb-right">
+
+
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </div>
+    <!--//inner-page-->
+    <!-- contact-form -->
+
+	{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <script>
+      var messages = {{ messages | safe }};
+      for (var i=0; i<messages.length; i++) {
+        alert(messages[i]);
+      }
+    </script>
+  {% endif %}
+{% endwith %}
+
+    <section class="w3l-contact-main" id="contact">
+        <div class="contact-infhny py-5">
+            <div class="container py-md-5">
+
+                <div class="top-map">
+                    <div class="row map-content-9" align="center" style="width: 900px; padding-left: 200px; ">
+
+
+                        <form action="/pred" enctype="multipart/form-data" method="post" class="text-right">
+                                <div class="form-style-w3ls">
+                                     <h3 class="title-big" align="center">Upload Leaf  Image  </h3>
+
+                                       <input type="file" name="file" id="w3lName2" placeholder="file*" required=""  >
+
+                             <button type="submit" class="btn btn-primary btn-style mt-3">Predict</button>
+                                     <button type="reset" class="btn btn-primary btn-style mt-3">Rest</button>
+
+                               </div>
+                         </form>
+
+
+
+
+
+
+
+                 </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- //contact-form -->
+
+    <!--//contact-->
+    <!--/footer-->
+   <footer class="w3l-footer-29-main">
+        <div class="footer-29-w3l py-5">
+            <div class="container pt-md-5">
+
+                <div class="w3l-copyright text-center mt-lg-5 mt-sm-4 pt-md-4 pt-3">
+                    <p class="copy-footer-29">©Herbal Plants Leaf . All rights reserved. Design by <a href="#" target="_blank">
+                            Student</a></p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- //footer -->
+
+    <!-- Js scripts -->
+    <!-- move top -->
+    <button onclick="topFunction()" id="movetop" title="Go to top">
+        <span class="fas fa-long-arrow-alt-up" aria-hidden="true"></span>
+    </button>
+    <script>
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function() {
+            scrollFunction()
+        };
+
+        function scrollFunction() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                document.getElementById("movetop").style.display = "block";
+            } else {
+                document.getElementById("movetop").style.display = "none";
+            }
+        }
+
+        // When the user clicks on the button, scroll to the top of the document
+        function topFunction() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+
+    </script>
+    <!-- //move top -->
+
+    <!-- Template JavaScript -->
+    <script src="../static/assets/js/jquery-3.3.1.min.js"></script>
+    <script src="../static/assets/js/theme-change.js"></script>
+    <!--/slider-js-->
+    <!-- MENU-JS -->
+    <script>
+        $(window).on("scroll", function() {
+            var scroll = $(window).scrollTop();
+
+            if (scroll >= 80) {
+                $("#site-header").addClass("nav-fixed");
+            } else {
+                $("#site-header").removeClass("nav-fixed");
+            }
+        });
+
+        //Main navigation Active Class Add Remove
+        $(".navbar-toggler").on("click", function() {
+            $("header").toggleClass("active");
+        });
+        $(document).on("ready", function() {
+            if ($(window).width() > 991) {
+                $("header").removeClass("active");
+            }
+            $(window).on("resize", function() {
+                if ($(window).width() > 991) {
+                    $("header").removeClass("active");
+                }
+            });
+        });
+
+    </script>
+    <!-- //MENU-JS -->
+
+    <!-- disable body scroll which navbar is in active -->
+    <script>
+        $(function() {
+            $('.navbar-toggler').click(function() {
+                $('body').toggleClass('noscroll');
+            })
+        });
+
+    </script>
+    <!-- //disable body scroll which navbar is in active -->
+    <!-- //bootstrap -->
+    <script src="../static/assets/js/bootstrap.min.js"></script>
+
+</body>
+
+</html>
