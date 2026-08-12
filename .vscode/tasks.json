@@ -177,6 +177,15 @@
 			"args": [
 				"push"
 			]
+		},
+		{
+			"label": "git-status-short-cleanup",
+			"type": "shell",
+			"command": "git",
+			"args": [
+				"status",
+				"--short"
+			]
 		}
 	]
 }

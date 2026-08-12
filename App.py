@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, session, flash, send_file, jsonify
+import json
 import os
 
 from pymongo import MongoClient
@@ -47,6 +48,26 @@ def report_doc_to_row(doc):
 def db_error_response(error):
     return render_template('db_error.html', error_message=str(error), db_uri=MONGO_URI, db_name=MONGO_DB_NAME), 500
 
+
+def get_react_assets():
+    manifest_path = os.path.join(app.static_folder, 'react', '.vite', 'manifest.json')
+    try:
+        with open(manifest_path, 'r', encoding='utf-8') as manifest_file:
+            manifest = json.load(manifest_file)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return None, None
+
+    entry = manifest.get('index.html')
+    if not entry:
+        return None, None
+
+    js_file = entry.get('file')
+    css_files = entry.get('css', [])
+
+    js_path = f"react/{js_file}" if js_file else None
+    css_path = f"react/{css_files[0]}" if css_files else None
+    return css_path, js_path
+
 english_bot = ChatBot('Bot',
                       storage_adapter='chatterbot.storage.MongoDatabaseAdapter',
                       database_uri=MONGO_URI,
@@ -87,6 +108,18 @@ def home():
 @app.route('/NewUser')
 def NewUser():
     return render_template('NewUser.html')
+
+
+@app.route('/ReactApp')
+def ReactApp():
+    react_css, react_js = get_react_assets()
+    react_dev_server = os.getenv('REACT_DEV_SERVER', '').strip()
+    return render_template(
+        'react_app.html',
+        react_css=react_css,
+        react_js=react_js,
+        react_dev_server=react_dev_server,
+    )
 
 
 @app.route('/Chat')

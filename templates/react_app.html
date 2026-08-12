@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React Frontend</title>
+
+    {% if react_dev_server %}
+    <script type="module" src="{{ react_dev_server }}/@vite/client"></script>
+    {% endif %}
+
+    {% if react_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename=react_css) }}">
+    {% endif %}
+</head>
+<body>
+    <div id="root"></div>
+
+    {% if react_dev_server %}
+    <script type="module" src="{{ react_dev_server }}/src/main.jsx"></script>
+    {% elif react_js %}
+    <script type="module" src="{{ url_for('static', filename=react_js) }}"></script>
+    {% else %}
+    <p style="padding:16px;font-family:Arial,sans-serif;">
+        React build not found. Run <strong>npm run build</strong> in the frontend folder, or set
+        <strong>REACT_DEV_SERVER=http://localhost:5173</strong> before starting Flask.
+    </p>
+    {% endif %}
+</body>
+</html>
