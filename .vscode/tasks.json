@@ -70,6 +70,113 @@
 				".",
 				":(exclude)venv/**"
 			]
+		},
+		{
+			"label": "git-commit-no-venv",
+			"type": "shell",
+			"command": "git",
+			"args": [
+				"commit",
+				"-m",
+				"Update project files (exclude venv)"
+			]
+		},
+		{
+			"label": "git-final-status",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"git rev-parse --abbrev-ref HEAD; git log -1 --oneline; $s=git status --porcelain=v1; Write-Output \"UNSTAGED_OR_UNTRACKED=$($s.Count)\"; $s | Select-Object -First 10"
+			]
+		},
+		{
+			"label": "git-push-main",
+			"type": "shell",
+			"command": "git",
+			"args": [
+				"push"
+			]
+		},
+		{
+			"label": "git-status-short-cleanup",
+			"type": "shell",
+			"command": "git",
+			"args": [
+				"status",
+				"--short"
+			]
+		},
+		{
+			"label": "git-untrack-venv-pycache",
+			"type": "shell",
+			"command": "git",
+			"args": [
+				"rm",
+				"-r",
+				"--cached",
+				"--ignore-unmatch",
+				"venv",
+				"__pycache__"
+			]
+		},
+		{
+			"label": "git-cleanup-summary",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"$s=git status --porcelain=v1; 'TOTAL='+$s.Count; 'STAGED='+(@($s | Where-Object { $_ -match '^[MADRCU]' }).Count); 'UNSTAGED='+(@($s | Where-Object { $_ -match '^.[MADRCU]' }).Count); $s | Select-Object -First 20"
+			]
+		},
+		{
+			"label": "git-add-ignore",
+			"type": "shell",
+			"command": "git",
+			"args": [
+				"add",
+				".gitignore"
+			]
+		},
+		{
+			"label": "git-commit-cleanup",
+			"type": "shell",
+			"command": "git",
+			"args": [
+				"commit",
+				"-m",
+				"Stop tracking venv and pycache files"
+			]
+		},
+		{
+			"label": "git-commit-cleanup-tail",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"$p='c:\\Users\\manor\\AppData\\Roaming\\Code\\User\\workspaceStorage\\59dc77c192291bb376e92db3ccac96f9\\GitHub.copilot-chat\\chat-session-resources\\62828e8c-7c12-4d29-abba-19d08219e038\\call_qkERlj7TEzrj27CwRBoQI0GL__vscode-1786560773184\\content.txt'; Get-Content $p | Select-Object -Last 30"
+			]
+		},
+		{
+			"label": "git-verify-cleanup-commit",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"git log -1 --oneline; $s=git status --porcelain=v1; 'REMAINING='+$s.Count; $s | Select-Object -First 10"
+			]
+		},
+		{
+			"label": "git-push-cleanup",
+			"type": "shell",
+			"command": "git",
+			"args": [
+				"push"
+			]
 		}
 	]
 }
