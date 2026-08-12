@@ -1,6 +1,7 @@
 from chatterbot import ChatBot
 from requests import get
 from bs4 import BeautifulSoup
+from nltk.sentiment import SentimentIntensityAnalyzer
 import os
 from flask import Flask, render_template, request, jsonify
 
